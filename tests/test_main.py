@@ -1,5 +1,3 @@
-import os  # 使用しないimport文（意図的にLintエラーを発生させる）
-import pytest  # 実際は使わないが意図的に残す
 from fastapi.testclient import TestClient
 
 from main import app
