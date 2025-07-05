@@ -1,0 +1,27 @@
+# Python関連
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# OS
+.DS_Store
+
+# Git
+.git
+.gitignore
+.github/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Coverage
+htmlcov/
+.coverage
+.pytest_cache/ 
+
+# README
+README.md
