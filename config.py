@@ -33,6 +33,6 @@ def get_db() -> Generator[Session, None, None]:
 def create_tables():
     """テーブルを作成する関数"""
     # モデルをインポートしてテーブルを作成
-    from models.user import User
+    from models.user import User  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
