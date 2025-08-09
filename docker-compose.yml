@@ -15,7 +15,7 @@ services:
     image: postgres:15
     environment:
       - POSTGRES_DB=fastapi-test
-      - POSTGRES_USER=user
+      - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
@@ -28,11 +28,15 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
     ports:
       - "8080:80"
     depends_on:
       - db
     restart: unless-stopped
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin # ← pgAdmin の設定/保存済み接続を永続化
 
 volumes:
   postgres_data:
+  pgadmin_data:
