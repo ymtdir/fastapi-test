@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from config import create_tables
-from routers import users
+from routers import users, auth
 
 app = FastAPI()
 
@@ -36,3 +36,4 @@ def add_numbers(request: AddRequest):
 
 # ルーターの登録
 app.include_router(users.router)
+app.include_router(auth.router)
