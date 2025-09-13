@@ -3,7 +3,8 @@
 リクエスト/レスポンスのバリデーションとシリアライゼーションを行います。
 """
 
-from pydantic import BaseModel, Field
+from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
 
 
 class UserCreate(BaseModel):
@@ -58,4 +59,40 @@ class UserResponse(BaseModel):
         # JSON Schema用のサンプルデータ
         json_schema_extra = {
             "example": {"id": 1, "name": "user", "email": "user@example.com"}
+        }
+
+
+class UserUpdate(BaseModel):
+    """ユーザー更新用スキーマ
+
+    PUTリクエストで受け取るデータの形式を定義します。
+    名前・メールアドレスとパスワードの両方を更新可能です。
+
+    Attributes:
+        name: ユーザー名（オプション、3-50文字）
+        email: メールアドレス（オプション、有効なメール形式）
+        current_password: 現在のパスワード（パスワード変更時のみ必須）
+        new_password: 新しいパスワード（オプション、8文字以上）
+    """
+
+    name: Optional[str] = Field(
+        None, min_length=3, max_length=50, description="ユーザー名"
+    )
+    email: Optional[EmailStr] = Field(None, description="メールアドレス")
+    current_password: Optional[str] = Field(None, description="現在のパスワード")
+    new_password: Optional[str] = Field(
+        None, min_length=8, description="新しいパスワード"
+    )
+
+    class Config:
+        """設定クラス"""
+
+        # JSON Schema用のサンプルデータ
+        json_schema_extra = {
+            "example": {
+                "name": "updated_user",
+                "email": "updated@example.com",
+                "current_password": "oldpassword",
+                "new_password": "newpassword123",
+            }
         }
