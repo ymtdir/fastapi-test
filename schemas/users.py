@@ -13,7 +13,7 @@ class UserCreate(BaseModel):
     POSTリクエストで受け取るデータの形式を定義します。
 
     Attributes:
-        name: ユーザー名（必須、3-50文字）
+        name: ユーザー名（必須、3-50文字、重複可能）
         email: メールアドレス（必須、有効なメール形式）
         password: パスワード（必須、8文字以上）
     """
@@ -69,7 +69,7 @@ class UserUpdate(BaseModel):
     名前・メールアドレスとパスワードの両方を更新可能です。
 
     Attributes:
-        name: ユーザー名（オプション、3-50文字）
+        name: ユーザー名（オプション、3-50文字、重複可能）
         email: メールアドレス（オプション、有効なメール形式）
         current_password: 現在のパスワード（パスワード変更時のみ必須）
         new_password: 新しいパスワード（オプション、8文字以上）

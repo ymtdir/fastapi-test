@@ -32,7 +32,7 @@ class UserService:
             User: 作成されたユーザーオブジェクト
 
         Raises:
-            IntegrityError: ユーザー名またはメールアドレスが重複している場合
+            IntegrityError: メールアドレスが重複している場合
         """
         # パスワードをハッシュ化
         hashed_password = pwd_context.hash(user_data.password)
@@ -92,19 +92,6 @@ class UserService:
         return db.query(User).filter(User.email == email).first()
 
     @staticmethod
-    def is_name_taken(db: Session, name: str) -> bool:
-        """ユーザー名が既に使用されているかチェックする
-
-        Args:
-            db: データベースセッション
-            name: チェックするユーザー名
-
-        Returns:
-            bool: 使用済みの場合True、利用可能な場合False
-        """
-        return UserService.get_user_by_name(db, name) is not None
-
-    @staticmethod
     def is_email_taken(db: Session, email: str) -> bool:
         """メールアドレスが既に使用されているかチェックする
 
@@ -155,7 +142,7 @@ class UserService:
             Optional[User]: 更新されたユーザーオブジェクト（存在しない場合はNone）
 
         Raises:
-            IntegrityError: ユーザー名またはメールアドレスが重複している場合
+            IntegrityError: メールアドレスが重複している場合
             ValueError: パスワード変更時に現在のパスワードが正しくない場合
         """
         db_user = UserService.get_user_by_id(db, user_id)
