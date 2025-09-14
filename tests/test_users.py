@@ -44,7 +44,6 @@ class TestCreateUser:
         )
 
         # UserServiceのメソッドをモック化
-        UserService.is_name_taken = MagicMock(return_value=False)
         UserService.is_email_taken = MagicMock(return_value=False)
         UserService.create_user = MagicMock(return_value=mock_user)
 
@@ -75,7 +74,6 @@ class TestCreateUser:
             assert "password" not in response_data  # パスワードは含まれない
 
             # サービスメソッドの呼び出し確認
-            UserService.is_name_taken.assert_called_once_with(mock_db, "testuser")
             UserService.is_email_taken.assert_called_once_with(
                 mock_db, "test@example.com"
             )
@@ -84,50 +82,8 @@ class TestCreateUser:
         finally:
             # オーバーライドとモックをクリア
             app.dependency_overrides.clear()
-            UserService.is_name_taken.reset_mock()
             UserService.is_email_taken.reset_mock()
             UserService.create_user.reset_mock()
-
-    def test_create_user_duplicate_name(self, client: TestClient):
-        """ユーザー作成の異常系テスト（重複するユーザー名）
-
-        既に存在するユーザー名を使用した場合のエラーハンドリングを検証します。
-        """
-        # モックデータベースセッション
-        mock_db = MagicMock()
-
-        # UserServiceのメソッドをモック化（ユーザー名重複）
-        UserService.is_name_taken = MagicMock(return_value=True)
-        UserService.is_email_taken = MagicMock(return_value=False)
-
-        # データベースセッションをオーバーライド
-        def override_get_db():
-            yield mock_db
-
-        app.dependency_overrides[get_db] = override_get_db
-
-        try:
-            # テストデータ
-            request_data = {
-                "name": "existinguser",
-                "email": "new@example.com",
-                "password": "password123",
-            }
-
-            # APIリクエストを送信
-            response = client.post("/api/users/", json=request_data)
-
-            # エラーレスポンスの検証
-            assert response.status_code == 400
-            response_data = response.json()
-            assert "existinguser" in response_data["detail"]
-            assert "既に使用されています" in response_data["detail"]
-
-        finally:
-            # オーバーライドとモックをクリア
-            app.dependency_overrides.clear()
-            UserService.is_name_taken.reset_mock()
-            UserService.is_email_taken.reset_mock()
 
     def test_create_user_duplicate_email(self, client: TestClient):
         """ユーザー作成の異常系テスト（重複するメールアドレス）
@@ -167,7 +123,6 @@ class TestCreateUser:
         finally:
             # オーバーライドとモックをクリア
             app.dependency_overrides.clear()
-            UserService.is_name_taken.reset_mock()
             UserService.is_email_taken.reset_mock()
 
     def test_create_user_invalid_data(self, client: TestClient):
@@ -223,7 +178,6 @@ class TestCreateUser:
         mock_db = MagicMock()
 
         # UserServiceのメソッドをモック化
-        UserService.is_name_taken = MagicMock(return_value=False)
         UserService.is_email_taken = MagicMock(return_value=False)
         UserService.create_user = MagicMock(side_effect=IntegrityError("", "", ""))
 
@@ -252,7 +206,6 @@ class TestCreateUser:
         finally:
             # オーバーライドとモックをクリア
             app.dependency_overrides.clear()
-            UserService.is_name_taken.reset_mock()
             UserService.is_email_taken.reset_mock()
             UserService.create_user.reset_mock()
 
@@ -582,7 +535,7 @@ class TestUpdateUser:
     def test_update_user_duplicate_error(self, client: TestClient):
         """ユーザー更新の異常系テスト（重複エラー）
 
-        重複するユーザー名やメールアドレスで更新した場合のエラーハンドリングを検証します。
+        重複するメールアドレスで更新した場合のエラーハンドリングを検証します。
         """
         # モックデータベースセッション
         mock_db = MagicMock()
@@ -599,7 +552,6 @@ class TestUpdateUser:
         try:
             # テストデータ
             request_data = {
-                "name": "duplicate_user",
                 "email": "duplicate@example.com",
             }
 

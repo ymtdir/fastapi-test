@@ -43,24 +43,17 @@ async def create_user(
         UserResponse: 作成されたユーザー情報
 
     Raises:
-        HTTPException: ユーザー名またはメールアドレスが重複している場合（400）
+        HTTPException: メールアドレスが重複している場合（400）
     """
 
-    # 1. ユーザー名の重複チェック
-    if UserService.is_name_taken(db, user_data.name):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"ユーザー名 '{user_data.name}' は既に使用されています",
-        )
-
-    # 2. メールアドレスの重複チェック
+    # 1. メールアドレスの重複チェック
     if UserService.is_email_taken(db, user_data.email):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"メールアドレス '{user_data.email}' は既に使用されています",
         )
 
-    # 3. ユーザー作成
+    # 2. ユーザー作成
     try:
         db_user = UserService.create_user(db, user_data)
         return UserResponse.model_validate(db_user)
@@ -68,7 +61,7 @@ async def create_user(
         # データベースレベルでの制約違反（念のため）
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="ユーザー名またはメールアドレスが既に使用されています",
+            detail="メールアドレスが既に使用されています",
         )
 
 
@@ -146,7 +139,7 @@ async def update_user(
     Raises:
         HTTPException: ユーザーが存在しない場合（404）
         HTTPException: パスワード変更時に現在のパスワードが正しくない場合（400）
-        HTTPException: ユーザー名またはメールアドレスが重複している場合（400）
+        HTTPException: メールアドレスが重複している場合（400）
     """
 
     try:
@@ -170,7 +163,7 @@ async def update_user(
         # データベース制約違反（重複エラー）
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="ユーザー名またはメールアドレスが既に使用されています",
+            detail="メールアドレスが既に使用されています",
         )
 
 
